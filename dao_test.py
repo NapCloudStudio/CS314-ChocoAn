@@ -1,19 +1,26 @@
 import hashlib
+import os
 from dao import DAO
+
+
+database_path = "test.db"
+if os.path.exists(database_path):
+    os.remove(database_path)
+
+dao = DAO(database_path)
 
 
 def sha256(text: str) -> str:
     return hashlib.sha256(text.encode()).hexdigest()
 
 def create_tables():
-    DAO().create_tables()
+    dao.create_tables()
 
 def add_test_data_manager():
-    DAO().create_manager("admin", sha256("admin"))
-    DAO().create_manager("John Manager", sha256("password123"))
+    dao.create_manager("admin", sha256("admin"))
+    dao.create_manager("John Manager", sha256("password123"))
 
 def add_test_data_member():
-    dao = DAO()
     ma1 = dao.create_address("Pyramid Valley Road", "Keswick", "IA", "50136")
     dao.create_member("James", ma1, "active")
     ma2 = dao.create_address("2479 New York Avenue", "Dallas", "TX", "76031")
@@ -30,7 +37,6 @@ def add_test_data_member():
     dao.create_member("Richard", ma7, "active")
 
 def add_test_data_provider():
-    dao = DAO()
     pa1 = dao.create_address("3115 Hannah Street", "Andrews", "NC", "28901")
     dao.create_provider("Dietary Clinic", sha256("123456"), pa1, "dietaryclinic@example.com", "active")
     pa2 = dao.create_address("1110 Patterson Street", "Houston", "TX", "77002")
@@ -39,27 +45,26 @@ def add_test_data_provider():
     dao.create_provider("Wellness Consultants", sha256("correcthorsebatterystaple"), pa3, "wellness@example.com", "active")
 
 def add_test_data_service():
-    DAO().create_service("Wellness Check", 50)
-    DAO().create_service("Dietary Consultation", 75)
-    DAO().create_service("Therapy Session", 80)
-    DAO().create_service("Group Counselling", 40)
-    DAO().create_service("Personal Trainer Session", 100)
+    dao.create_service("Wellness Check", 50)
+    dao.create_service("Dietary Consultation", 75)
+    dao.create_service("Therapy Session", 80)
+    dao.create_service("Group Counselling", 40)
+    dao.create_service("Personal Trainer Session", 100)
 
-def get_pw_hashes():
-    m_id = 1
-    res = DAO().get_manager_password_hash(m_id)
-    print(f"manager: '{res}'")
+def get_manager_pw_hashes():
+    print(f"manager 1: '{dao.get_manager_password_hash(1)}'")
+    print(f"manager 2: '{dao.get_manager_password_hash(2)}'")
 
-    p_id = 1
-    res = DAO().get_provider_password_hash(p_id)
-    print(f"provider: '{res}'")
+def get_provider_pw_hashes():
+    print(f"provider 1: '{dao.get_provider_password_hash(1)}'")
+    print(f"provider 2: '{dao.get_provider_password_hash(2)}'")
 
 def get_member_status():
-    print("1: " + DAO().get_member_status(1))
-    print("2: " + DAO().get_member_status(2))
-    print("3: " + DAO().get_member_status(3))
-    print("4: " + DAO().get_member_status(4))
-    print("5: " + DAO().get_member_status(5))
+    print(f"member 1: {dao.get_member_status(1)}")
+    print(f"member 2: {dao.get_member_status(2)}")
+    print(f"member 3: {dao.get_member_status(3)}")
+    print(f"member 4: {dao.get_member_status(4)}")
+    print(f"member 5: {dao.get_member_status(5)}")
 
 if __name__ == "__main__":
     create_tables()
@@ -67,5 +72,7 @@ if __name__ == "__main__":
     add_test_data_provider()
     add_test_data_member()
     add_test_data_service()
-    get_pw_hashes()
+
+    get_manager_pw_hashes()
+    get_provider_pw_hashes()
     get_member_status()

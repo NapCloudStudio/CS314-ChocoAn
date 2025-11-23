@@ -3,13 +3,10 @@ import sqlite3
 # data access object - singleton class containing all database queries
 # from dao import DAO
 class DAO:
-    def __new__(cls):
-        if not hasattr(cls, 'instance'):
-            cls.instance = super(DAO, cls).__new__(cls)
-        return cls.instance
-
-    def __init__(self):
-        self._con = sqlite3.connect("ChocAn.db")
+    def __init__(self, path: str):
+        if path is None:
+            raise Exception("no path specified")
+        self._con = sqlite3.connect(path)
 
     def create_tables(self):
         cur = self._con.cursor()
