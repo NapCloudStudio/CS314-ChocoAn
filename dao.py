@@ -66,13 +66,11 @@ class DAO:
             "state": state,
             "zip": zip
         }
-        print(data)
         cur = self._con.cursor()
         cur.execute(f"""insert into {_Address.table_name}(
             {_Address.street}, {_Address.city}, {_Address.state}, {_Address.zip}
             ) values(:street, :city, :state, :zip)""", data)
         self._con.commit()
-        print(cur.lastrowid)
         return cur.lastrowid
 
     def create_manager(self, name: str, pw_hash: str) -> int:
@@ -108,13 +106,11 @@ class DAO:
             "addr": address_id,
             "status": status
         }
-        print(data)
         cur = self._con.cursor()
         cur.execute(f"""insert into {_Member.table_name}(
             {_Member.name}, {_Member.address_id}, {_Member.status}
             ) values(:name, :addr, :status)""", data)
         self._con.commit()
-        print(cur.lastrowid)
         return cur.lastrowid
 
     def create_service(self, name: str, fee: str) -> int:
@@ -132,12 +128,20 @@ class DAO:
 ########## retrieve database records
 
     def get_manager_password_hash(self, id: int) -> str:
-        #TODO
-        return None
+        data = { "id": id }
+        cur = self._con.cursor()
+        response = cur.execute(f"""select {_Manager.pw_hash} from {_Manager.table_name}
+            where {_Manager.id} = :id""", data)
+        result = response.fetchone()
+        return None if result is None else result[0]
 
     def get_provider_password_hash(self, id: int) -> str:
-        #TODO
-        return None
+        data = { "id": id }
+        cur = self._con.cursor()
+        response = cur.execute(f"""select {_Provider.pw_hash} from {_Provider.table_name}
+            where {_Provider.id} = :id""", data)
+        result = response.fetchone()
+        return None if result is None else result[0]
 
 ########## database schema
 

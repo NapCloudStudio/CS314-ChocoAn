@@ -1,12 +1,22 @@
+import hashlib
 from dao import DAO
 
-if __name__ == "__main__":
+
+def sha256(text: str) -> str:
+    return hashlib.sha256(text.encode()).hexdigest()
+
+def create_tables():
     dao = DAO()
     dao.create_tables()
 
-    dao.create_manager("admin", "")
-    dao.create_manager("John Manager", "")
+def add_test_data_manager():
+    dao = DAO()
+    dao.create_manager("admin", sha256("admin"))
+    dao.create_manager("John Manager", sha256("password123"))
 
+def add_test_data_member():
+    dao = DAO()
+    hasher = hashlib.sha256()
     ma1 = dao.create_address("Pyramid Valley Road", "Keswick", "IA", "50136")
     dao.create_member("James", ma1, "active")
     ma2 = dao.create_address("2479 New York Avenue", "Dallas", "TX", "76031")
@@ -22,15 +32,37 @@ if __name__ == "__main__":
     ma7 = dao.create_address("1838 Longview Avenue", "New York", "NY", "10019")
     dao.create_member("Richard", ma7, "active")
 
+def add_test_data_provider():
+    dao = DAO()
     pa1 = dao.create_address("3115 Hannah Street", "Andrews", "NC", "28901")
-    dao.create_provider("Dietary Clinic", "", pa1, "dietaryclinic@example.com", "active")
+    dao.create_provider("Dietary Clinic", sha256("123456"), pa1, "dietaryclinic@example.com", "active")
     pa2 = dao.create_address("1110 Patterson Street", "Houston", "TX", "77002")
-    dao.create_provider("Counseling Center", "", pa2, "cchouston@example.com", "active")
+    dao.create_provider("Counseling Center", sha256("cchouston"), pa2, "cchouston@example.com", "active")
     pa3 = dao.create_address("1640 Grant Street", "Plano", "TX", "75086")
-    dao.create_provider("Wellness Consultants", "", pa3, "wellness@example.com", "active")
+    dao.create_provider("Wellness Consultants", sha256("correcthorsebatterystaple"), pa3, "wellness@example.com", "active")
 
-    dao.create_service("Wellness Check", 50),
-    dao.create_service("Dietary Consultation", 75),
-    dao.create_service("Therapy Session", 80),
-    dao.create_service("Group Counselling", 40),
-    dao.create_service("Personal Trainer Session", 100),
+def add_test_data_service():
+    dao = DAO()
+    dao.create_service("Wellness Check", 50)
+    dao.create_service("Dietary Consultation", 75)
+    dao.create_service("Therapy Session", 80)
+    dao.create_service("Group Counselling", 40)
+    dao.create_service("Personal Trainer Session", 100)
+
+def get_pw_hashes():
+    m_id = 1
+    res = DAO().get_manager_password_hash(m_id)
+    print(f"manager: '{res}'")
+
+    p_id = 1
+    res = DAO().get_provider_password_hash(p_id)
+    print(f"provider: '{res}'")
+
+
+if __name__ == "__main__":
+    create_tables()
+    add_test_data_manager()
+    add_test_data_provider()
+    add_test_data_member()
+    add_test_data_service()
+    get_pw_hashes()
