@@ -6,17 +6,14 @@ def sha256(text: str) -> str:
     return hashlib.sha256(text.encode()).hexdigest()
 
 def create_tables():
-    dao = DAO()
-    dao.create_tables()
+    DAO().create_tables()
 
 def add_test_data_manager():
-    dao = DAO()
-    dao.create_manager("admin", sha256("admin"))
-    dao.create_manager("John Manager", sha256("password123"))
+    DAO().create_manager("admin", sha256("admin"))
+    DAO().create_manager("John Manager", sha256("password123"))
 
 def add_test_data_member():
     dao = DAO()
-    hasher = hashlib.sha256()
     ma1 = dao.create_address("Pyramid Valley Road", "Keswick", "IA", "50136")
     dao.create_member("James", ma1, "active")
     ma2 = dao.create_address("2479 New York Avenue", "Dallas", "TX", "76031")
@@ -42,12 +39,11 @@ def add_test_data_provider():
     dao.create_provider("Wellness Consultants", sha256("correcthorsebatterystaple"), pa3, "wellness@example.com", "active")
 
 def add_test_data_service():
-    dao = DAO()
-    dao.create_service("Wellness Check", 50)
-    dao.create_service("Dietary Consultation", 75)
-    dao.create_service("Therapy Session", 80)
-    dao.create_service("Group Counselling", 40)
-    dao.create_service("Personal Trainer Session", 100)
+    DAO().create_service("Wellness Check", 50)
+    DAO().create_service("Dietary Consultation", 75)
+    DAO().create_service("Therapy Session", 80)
+    DAO().create_service("Group Counselling", 40)
+    DAO().create_service("Personal Trainer Session", 100)
 
 def get_pw_hashes():
     m_id = 1
@@ -58,6 +54,12 @@ def get_pw_hashes():
     res = DAO().get_provider_password_hash(p_id)
     print(f"provider: '{res}'")
 
+def get_member_status():
+    print("1: " + DAO().get_member_status(1))
+    print("2: " + DAO().get_member_status(2))
+    print("3: " + DAO().get_member_status(3))
+    print("4: " + DAO().get_member_status(4))
+    print("5: " + DAO().get_member_status(5))
 
 if __name__ == "__main__":
     create_tables()
@@ -66,3 +68,4 @@ if __name__ == "__main__":
     add_test_data_member()
     add_test_data_service()
     get_pw_hashes()
+    get_member_status()

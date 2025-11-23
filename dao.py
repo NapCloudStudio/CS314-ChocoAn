@@ -127,21 +127,55 @@ class DAO:
 
 ########## retrieve database records
 
-    def get_manager_password_hash(self, id: int) -> str:
+    def _get_manager_field(self, id: int, field: str) -> str:
         data = { "id": id }
         cur = self._con.cursor()
-        response = cur.execute(f"""select {_Manager.pw_hash} from {_Manager.table_name}
+        response = cur.execute(f"""select {field} from {_Manager.table_name}
             where {_Manager.id} = :id""", data)
         result = response.fetchone()
         return None if result is None else result[0]
 
-    def get_provider_password_hash(self, id: int) -> str:
+    def get_manager_name(self, id: int) -> str:
+        return self._get_manager_field(id, _Manager.name)
+
+    def get_manager_password_hash(self, id: int) -> str:
+        return self._get_manager_field(id, _Manager.pw_hash)
+
+
+    def _get_provider_field(self, id: int, field: str) -> str:
         data = { "id": id }
         cur = self._con.cursor()
-        response = cur.execute(f"""select {_Provider.pw_hash} from {_Provider.table_name}
+        response = cur.execute(f"""select {field} from {_Provider.table_name}
             where {_Provider.id} = :id""", data)
         result = response.fetchone()
         return None if result is None else result[0]
+
+    def get_provider_name(self, id: int) -> str:
+        return self._get_provider_field(id, _Provider.name)
+
+    def get_provider_password_hash(self, id: int) -> str:
+        return self._get_provider_field(id, _Provider.pw_hash)
+
+    def get_provider_email(self, id: int) -> str:
+        return self._get_provider_field(id, _Provider.email)
+
+    def get_provider_status(self, id: int) -> str:
+        return self._get_provider_field(id, _Provider.status)
+
+
+    def _get_member_field(self, id: int, field: str) -> str:
+        data = { "id": id }
+        cur = self._con.cursor()
+        response = cur.execute(f"""select {field} from {_Member.table_name}
+            where {_Member.id} = :id""", data)
+        result = response.fetchone()
+        return None if result is None else result[0]
+
+    def get_member_name(self, id: int) -> str:
+        return self._get_member_field(id, _Member.name)
+
+    def get_member_status(self, id: int) -> str:
+        return self._get_member_field(id, _Member.status)
 
 ########## database schema
 
