@@ -1,9 +1,22 @@
+from typing import Self
+import os
 import sqlite3
 import util
 
 # data access object - singleton class containing all database queries
 # from dao import DAO
 class DAO:
+    _CHOCAN_DB_PATH = "ChocAn.db"
+
+    def chocan() -> Self:
+        is_creating = not os.path.exists(DAO._CHOCAN_DB_PATH)
+        dao = DAO(DAO._CHOCAN_DB_PATH)
+        if is_creating:
+            dao.create_tables()
+            dao.create_manager("admin", "admin")
+        return dao
+
+
     def __init__(self, path: str):
         if path is None:
             raise Exception("no path specified")

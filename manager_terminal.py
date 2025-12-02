@@ -1,10 +1,29 @@
 from ChocAn_main import get_option
 from dao import DAO
+import util
+
+
+mgr_id = None
 
 def manager_terminal():
+    dao = DAO.chocan()
+    while True:
+        print("\nLogin")
+        input_id = input("User id: ")
+        input_pw = input("Password: ")
+
+        hash = dao.get_manager_password_hash(int(input_id))
+        if hash == util.sha256(input_pw):
+            print("Login successful!\n")
+            mgr_id = input_id
+            menu()
+        else:
+            print("Invalid login. Please try again.")
+
+def menu():
     do_manager_terminal = True
 
-    while do_manager_terminal == True:
+    while do_manager_terminal:
         print("Welcome to the Chocaholics Anonymous Manager Terminal!")
         print("Please chose one of the following options:")
         print("1 - manage provider list")
@@ -22,7 +41,6 @@ def manager_terminal():
             manage_members()
         else:
             do_manager_terminal = False
-
 
 def manage_providers():
     data = DAO("database")
