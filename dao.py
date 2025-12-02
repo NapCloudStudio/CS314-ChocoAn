@@ -1,4 +1,5 @@
 import sqlite3
+import util
 
 # data access object - singleton class containing all database queries
 # from dao import DAO
@@ -70,10 +71,10 @@ class DAO:
         self._con.commit()
         return cur.lastrowid
 
-    def create_manager(self, name: str, pw_hash: str) -> int:
+    def create_manager(self, name: str, pw: str) -> int:
         data = {
             "name": name,
-            "hash": pw_hash
+            "hash": util.sha256(pw)
         }
         cur = self._con.cursor()
         cur.execute(f"""insert into {_Manager.table_name}(
@@ -82,10 +83,10 @@ class DAO:
         self._con.commit()
         return cur.lastrowid
 
-    def create_provider(self, name: str, pw_hash: str, address_id: int, email: str, status: str) -> int:
+    def create_provider(self, name: str, pw: str, address_id: int, email: str, status: str) -> int:
         data = {
             "name": name,
-            "hash": pw_hash,
+            "hash": util.sha256(pw),
             "addr": address_id,
             "email": email,
             "status": status
