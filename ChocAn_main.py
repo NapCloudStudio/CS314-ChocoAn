@@ -6,7 +6,7 @@ def main():
 
     do_main_menu = True
 
-    while do_main_menu == True
+    while do_main_menu:
         print("Welcome to the Chocaholics Anonymous computer system!")
         print("Please choose an option:")
         print("1 - Run provider terminal")
