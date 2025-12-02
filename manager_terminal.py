@@ -67,7 +67,7 @@ def manage_providers():
             state = input("Enter the provider's state: ")
             zipcode = input("Enter the provider's zip code: ")
 
-            address_id = data.create_address(street, city, state, zip)
+            address_id = data.create_address(street, city, state, zipcode)
             data.create_provider(name, password, address_id, email, "valid")
         elif option == 2:
             print("modify provider")
