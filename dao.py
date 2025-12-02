@@ -1,6 +1,7 @@
 from typing import Self
 import os
 import sqlite3
+from data_classes import *
 import util
 
 # data access object - singleton class containing all database queries
@@ -13,7 +14,7 @@ class DAO:
         dao = DAO(DAO._CHOCAN_DB_PATH)
         if is_creating:
             dao.create_tables()
-            dao.create_manager("admin", "admin")
+            dao.create_manager("admin", "admin") # FIXME
         return dao
 
 
@@ -187,6 +188,92 @@ class DAO:
 
     def get_member_status(self, id: int) -> str:
         return self._get_member_field(id, _Member.status)
+
+########## update database records
+
+    def _update_single(self, sql: str, data: dict) -> bool:
+        rowcount = self._con.execute(sql, data).rowcount
+        #assert (rowcount <= 1), f"{rowcount} rows were modified, 1 expected"
+        self._con.commit()
+        return (rowcount == 1)
+
+    def update_address(self, id: int, street: str = None, city: str = None, state: str = None, zip: str = None) -> bool:
+        update = ""
+        if street is not None:
+            update += f"{_Address.street} = :street, "
+        if city is not None:
+            update += f"{_Address.city} = :city, "
+        if state is not None:
+            update += f"{_Address.state} = :state, "
+        if zip is not None:
+            update += f"{_Address.zip} = :zip"
+        if update == "":
+            return True
+        sql = f"""update {_Address.table_name}
+            set {update.rstrip(", ")}
+            where {_Address.id} = :id"""
+        return self._update_single(sql, {
+            "id": id,
+            "street": street,
+            "city": city,
+            "state": state,
+            "zip": zip
+        })
+
+
+    def update_provider(self, id: int, name: str = None, pw_hash: str = None, email: str = None, status: str = None) -> bool:
+        update = ""
+        if name is not None:
+            update += f"{_Provider.name} = :name, "
+        if pw_hash is not None:
+            update += f"{_Provider.pw_hash} = :hash, "
+        if addr_id is not None:
+            update += f"{_Provider.email} = :email, "
+        if status is not None:
+            update += f"{_Provider.status} = :status"
+        if update == "":
+            return True
+        sql = f"""update {_Provider.table_name}
+            set {update.rstrip(", ")}
+            where {_Provider.id} = :id"""
+
+        return self._update_single(sql, {
+            "id": id,
+            "name": name,
+            "hash": pw_hash,
+            "email": email,
+            "status": status,
+        })
+
+    def update_member(self, id: int, name: str = None, status: str = None) -> bool:
+        update = ""
+        if name is not None:
+            update += f"{_Provider.name} = :name, "
+        if addr_id is not None:
+            update += f"{_Provider.status} = :status"
+        if update == "":
+            return True
+        sql = f"""update {_Provider.table_name}
+            set {update.rstrip(", ")}
+            where {_Provider.id} = :id"""
+
+        return self._update_single(sql, {
+            "id": id,
+            "name": name,
+            "status": status,
+        })
+
+    def delete_provider(self, id: int) -> bool:
+        sql = f"""update {_Provider.table_name}
+            set {_Provider.status} = "{Provider.STATUS_INACTIVE}"
+            where {_Provider.id} = :id"""
+        return self._update_single(sql, { "id": id })
+
+    def delete_member(self, id: int) -> bool:
+        sql = f"""update {_Member.table_name}
+            set {_Member.status} = "{Member.STATUS_INACTIVE}"
+            where {_Member.id} = :id"""
+        return self._update_single(sql, { "id": id })
 
 ########## database schema
 
