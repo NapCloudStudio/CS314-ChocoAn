@@ -43,8 +43,7 @@ def menu():
             do_manager_terminal = False
 
 def manage_providers():
-    data = DAO("database")
-    data.create_tables()
+    data = DAO.chocan()
     do_manage_providers = True
 
     while do_manage_providers == True:
@@ -82,8 +81,7 @@ def manage_providers():
 
 
 def manage_services():
-    data = DAO("database")
-    data.create_tables()
+    data = DAO.chocan()
     do_manage_services = True
 
     while do_manage_services == True:
@@ -107,9 +105,7 @@ def manage_services():
             do_manage_services = False
 
 def manage_members():
-    data = DAO("database")
-    data.create_tables()
-
+    data = DAO.chocan()
     do_manage_members = True
 
     while do_manage_members == True:
