@@ -95,7 +95,7 @@ def manage_services():
 
         if option == 1:
             name = input("Enter the service name: ")
-            fee = input("Enter ther service fee: ")
+            fee = input("Enter the service fee: ")
 
             data.create_service(name, fee)
         elif option == 2:
@@ -129,10 +129,36 @@ def manage_members():
             data.create_member(name, address_id, "valid")
 
         elif option == 2:
-            #add modify function to DAO
-            print("modify member")
+            while True:
+                try:
+                    to_remove = int(input("Enter the member id of the member record to be modified: "))
+                    break
+                except(ValueError):
+                    print("Input must be an integer")
+
+            name = input("Update the member's name: ")
+            street = input("Update the member's streed address: ")
+            city = input("Update the member's city: ")
+            state = input("Update the member's state: ")
+            zipcode = input("Update the member's zip code: ")
+
+            #need to modify the database update function to support addresses
+
         elif option == 3:
-            #add remove function to DAO
-            print("remove member")
+            
+            while True:
+                try:
+                    to_remove = int(input("Enter the member id of the member to be removed: "))
+                    break
+                except(ValueError):
+                    print("Input must be an integer")
+
+            removed = data.delete_member(to_remove)
+
+            if removed == True:
+                print("Membership Terminated")
+            else:
+                print("Member not found")
+
         else:
             do_manage_members = False

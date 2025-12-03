@@ -227,7 +227,7 @@ class DAO:
             update += f"{_Provider.name} = :name, "
         if pw_hash is not None:
             update += f"{_Provider.pw_hash} = :hash, "
-        if addr_id is not None:
+        if email is not None:
             update += f"{_Provider.email} = :email, "
         if status is not None:
             update += f"{_Provider.status} = :status"
@@ -249,7 +249,7 @@ class DAO:
         update = ""
         if name is not None:
             update += f"{_Provider.name} = :name, "
-        if addr_id is not None:
+        if status is not None:
             update += f"{_Provider.status} = :status"
         if update == "":
             return True
