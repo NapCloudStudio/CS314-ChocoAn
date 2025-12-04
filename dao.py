@@ -168,6 +168,19 @@ class DAO:
     def get_provider_password_hash(self, id: int) -> str:
         return self._get_provider_field(id, _Provider.pw_hash)
 
+    def get_provider_addr(self, id: int) -> Address:
+        addr_id = self._get_provider_field(id, _Provider.address_id)
+        if addr_id is None:
+            return None
+
+        field = f"{_Address.street}, {_Address.city}, {_Address.state}, {_Address.zip}"
+        data = { "id": id }
+        cur = self._con.cursor()
+        response = cur.execute(f"""select * from {_Address.table_name}
+            where {_Address.id} = :id""", data)
+        result = response.fetchone()
+        return None if result is None else Address(result)
+
     def get_provider_email(self, id: int) -> str:
         return self._get_provider_field(id, _Provider.email)
 

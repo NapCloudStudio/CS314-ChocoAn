@@ -63,6 +63,20 @@ def get_member_status():
     print(f"member 4: {dao.get_member_status(4)}")
     print(f"member 5: {dao.get_member_status(5)}")
 
+def _get_provider_addr(p_tuple):
+    p_record = dao.get_provider_addr(p_tuple[0])
+    assert (p_record is not None), f"failed to find address with id {p_tuple[0]}"
+    assert (p_tuple[0] == p_record.id())
+    assert (p_tuple[1] == p_record.street())
+    assert (p_tuple[2] == p_record.city())
+    assert (p_tuple[3] == p_record.state())
+    assert (p_tuple[4] == p_record.zipcode())
+def get_provider_addr():
+    p1 = (1, "3115 Hannah Street", "Andrews", "NC", "28901")
+    _get_provider_addr(p1)
+    _get_provider_addr((2, "1110 Patterson Street", "Houston", "TX", "77002"))
+    print("get provider addr passed")
+
 def update_addr():
     dao.update_address(1, zip="asdf", city="zxcv")
     dao.update_address(2, state="test", street="text")
@@ -103,6 +117,7 @@ if __name__ == "__main__":
     get_manager_pw_hashes()
     get_provider_pw_hashes()
     get_member_status()
+    get_provider_addr()
 
     update_addr()
 
