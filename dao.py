@@ -168,8 +168,11 @@ class DAO:
     def get_provider_password_hash(self, id: int) -> str:
         return self._get_provider_field(id, _Provider.pw_hash)
 
-    def get_provider_addr(self, id: int) -> Address:
+    def get_provider_addr(self, id: int) -> int:
         addr_id = self._get_provider_field(id, _Provider.address_id)
+        return addr_id
+       
+        '''
         if addr_id is None:
             return None
 
@@ -180,6 +183,7 @@ class DAO:
             where {_Address.id} = :id""", data)
         result = response.fetchone()
         return None if result is None else Address(result)
+    '''
 
     def get_provider_email(self, id: int) -> str:
         return self._get_provider_field(id, _Provider.email)
@@ -201,6 +205,12 @@ class DAO:
 
     def get_member_status(self, id: int) -> str:
         return self._get_member_field(id, _Member.status)
+
+    def get_member_addr(self, id: int) -> int:
+        addr_id = self._get_member_field(id, _Member.address_id)
+        return addr_id
+
+        
 
 ########## update database records
 
@@ -287,6 +297,14 @@ class DAO:
             set {_Member.status} = "{Member.STATUS_INACTIVE}"
             where {_Member.id} = :id"""
         return self._update_single(sql, { "id": id })
+
+    def delete_service(self, id: int) -> bool:
+        cur = self._con.cursor()
+        try:
+            cur.execute(f"DELETE FROM {_Service.table_name} WHERE {_Service.id} = {id}")
+            return True
+        except sqlite3.OperationalError:
+            return False
 
 ########## database schema
 

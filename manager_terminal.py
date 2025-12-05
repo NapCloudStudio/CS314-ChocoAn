@@ -1,6 +1,6 @@
 from ChocAn_main import get_option
 from dao import DAO
-import util
+from util import sha256
 
 
 mgr_id = None
@@ -13,7 +13,7 @@ def manager_terminal():
         input_pw = input("Password: ")
 
         hash = dao.get_manager_password_hash(int(input_id))
-        if hash == util.sha256(input_pw):
+        if hash == sha256(input_pw):
             print("Login successful!\n")
             mgr_id = input_id
             menu()
@@ -67,14 +67,51 @@ def manage_providers():
             state = input("Enter the provider's state: ")
             zipcode = input("Enter the provider's zip code: ")
 
+            password_hash = sha256(password)
+
             address_id = data.create_address(street, city, state, zipcode)
-            data.create_provider(name, password, address_id, email, "valid")
+            data.create_provider(name, password_hash, address_id, email, "valid")
         elif option == 2:
-            print("modify provider")
-            #implement modify function on DAO
+            while True:
+                try:
+                    to_modify = int(input("Enter the provider id of the provider record to be modified: "))
+                    break
+                except(ValueError):
+                    print("Input must be an integer")
+
+                address = data.get_provider_addr(to_modify)
+
+                if address == None:
+                    print("Provider record not found")
+                else:
+                    name = input("Update the provider's name: ")
+                    email = input("Update the provider's email:")
+                    password = input("Update the providers password")
+                    street = input("Update the provider's streed address: ")
+                    city = input("Update the provider's city: ")
+                    state = input("Update the provider's state: ")
+                    zipcode = input("Update the provider's zip code: ")
+                    status = input("Update the provider's status: ")
+
+                    password_hash = sha256(password)
+
+                    data.update_address(address, street, city, state, zipcode)
+                    data.update_provider(to_modify, name, password_hash, email, status)
+
         elif option == 3:
-            print("remove provider")
-            #implement remove function
+            while True:
+                try:
+                    to_remove = int(input("Enter the provider id of the provider record to be removed: "))
+                    break
+                except(ValueError):
+                    print("Input must be an integer")
+
+                removed = data.delete_provider(to_remove)
+
+                if removed == True:
+                    print("Provider record removed")
+                else:
+                    print("Provider record not found")
         else:
             do_manage_providers = False
         
@@ -99,8 +136,18 @@ def manage_services():
 
             data.create_service(name, fee)
         elif option == 2:
-            #add remove service function for DAO
-            print("remove service")
+            while True:
+                try:
+                    to_remove = int(input("Enter the id of the service to be removed: "))
+                    break
+                except(ValueError):
+                    print("Input must be an integer")
+
+            if data.delete_service() == True:
+                print("service removed")
+            else:
+                print("service not found")
+        
         else:
             do_manage_services = False
 
@@ -125,24 +172,33 @@ def manage_members():
             state = input("Enter the member's state: ")
             zipcode = input("Enter the member's zip code: ")
 
-            address_id = data.create_address(street, city, state, zip)
+            address_id = data.create_address(street, city, state, zipcode)
             data.create_member(name, address_id, "valid")
 
         elif option == 2:
             while True:
                 try:
-                    to_remove = int(input("Enter the member id of the member record to be modified: "))
+                    to_modify = int(input("Enter the member id of the member record to be modified: "))
                     break
                 except(ValueError):
                     print("Input must be an integer")
 
-            name = input("Update the member's name: ")
-            street = input("Update the member's streed address: ")
-            city = input("Update the member's city: ")
-            state = input("Update the member's state: ")
-            zipcode = input("Update the member's zip code: ")
+            address = data.get_member_addr(to_modify)
 
-            #need to modify the database update function to support addresses
+            if address == None:
+                print("Member not found")
+            else:
+
+
+                name = input("Update the member's name: ")
+                street = input("Update the member's streed address: ")
+                city = input("Update the member's city: ")
+                state = input("Update the member's state: ")
+                zipcode = input("Update the member's zip code: ")
+                status = input("Update the member's status: ")
+
+                data.update_address(address, street, city, state, zipcode)
+                data.update_member(to_modify, name, status)
 
         elif option == 3:
             
