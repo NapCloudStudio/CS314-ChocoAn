@@ -4,6 +4,7 @@ import uuid
 
 from dao import DAO
 from util import get_option
+from data_classes import Member
 
 
 def provider_terminal():
@@ -41,7 +42,7 @@ def validate_member():
 
     status = data.get_member_status(member)
 
-    if status == "valid":
+    if status == Member.STATUS_ACTIVE:
         print("membership validated")
     else:
         print("membership invalid")
@@ -60,7 +61,7 @@ def create_report():
 
     status = data.get_member_status(member)
 
-    if status == "valid":
+    if status == Member.STATUS_ACTIVE:
         
         while True:
             try:
