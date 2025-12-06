@@ -79,7 +79,7 @@ def manage_providers():
                 except(ValueError):
                     print("Input must be an integer")
 
-                address = data.get_provider_addr(to_modify)
+                address = data.get_provider_addr_id(to_modify)
 
                 if address == None:
                     print("Provider record not found")

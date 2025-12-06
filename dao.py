@@ -139,6 +139,15 @@ class DAO:
 
 ########## retrieve database records
 
+    def get_address(self, id: int) -> Address:
+        field = f"{_Address.street}, {_Address.city}, {_Address.state}, {_Address.zip}"
+        data = { "id": id }
+        cur = self._con.cursor()
+        response = cur.execute(f"""select * from {_Address.table_name}
+            where {_Address.id} = :id""", data)
+        result = response.fetchone()
+        return None if result is None else Address(result)
+
     def _get_manager_field(self, id: int, field: str) -> str:
         data = { "id": id }
         cur = self._con.cursor()
@@ -168,22 +177,12 @@ class DAO:
     def get_provider_password_hash(self, id: int) -> str:
         return self._get_provider_field(id, _Provider.pw_hash)
 
-    def get_provider_addr(self, id: int) -> int:
-        addr_id = self._get_provider_field(id, _Provider.address_id)
-        return addr_id
-       
-        '''
-        if addr_id is None:
-            return None
+    def get_provider_addr_id(self, id: int) -> int:
+        return self._get_provider_field(id, _Provider.address_id)
 
-        field = f"{_Address.street}, {_Address.city}, {_Address.state}, {_Address.zip}"
-        data = { "id": id }
-        cur = self._con.cursor()
-        response = cur.execute(f"""select * from {_Address.table_name}
-            where {_Address.id} = :id""", data)
-        result = response.fetchone()
-        return None if result is None else Address(result)
-    '''
+    def get_provider_addr(self, id: int) -> Address:
+        addr_id = self._get_provider_field(id, _Provider.address_id)
+        return None if addr_id is None else self.get_address(addr_id)
 
     def get_provider_email(self, id: int) -> str:
         return self._get_provider_field(id, _Provider.email)
@@ -206,9 +205,12 @@ class DAO:
     def get_member_status(self, id: int) -> str:
         return self._get_member_field(id, _Member.status)
 
-    def get_member_addr(self, id: int) -> int:
+    def get_member_addr_id(self, id: int) -> int:
+        return self._get_member_field(id, _Member.address_id)
+
+    def get_member_addr(self, id: int) -> Address:
         addr_id = self._get_member_field(id, _Member.address_id)
-        return addr_id
+        return None if addr_id is None else self.get_address(addr_id)
 
     def _get_service_field(self, id: int, field: str) -> str:
         data = { "id": id }
@@ -227,7 +229,6 @@ class DAO:
         rows = cur.fetchall()
         for row in rows:
             print(row)
-        
 
 ########## update database records
 
