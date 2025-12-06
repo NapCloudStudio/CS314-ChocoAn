@@ -221,12 +221,41 @@ class DAO:
     def get_service_fee(self, id: int) -> int:
         return self._get_service_field(id, _Service.fee)
 
+    def get_service_name(self, id: int) -> str:
+        return self._get_service_field(id, _Service.name)
+
     def print_services(self):
         cur = self._con.cursor()
         cur.execute(f"SELECT * FROM {_Service.table_name} ORDER BY {_Service.name} ASC")
         rows = cur.fetchall()
         for row in rows:
             print(row)
+
+    def _get_addr_field(self, id: int, field: str) -> str:
+        data = { "id": id }
+        cur = self._con.cursor()
+        response = cur.execute(f"""select {field} from {_Address.table_name}
+            where {_Address.id} = :id""", data)
+        result = response.fetchone()
+        return None if result is None else result[0]
+
+    def get_addr_street(self, id: int) -> str:
+        return self._get_addr_field(id, _Address.street)
+
+    def get_addr_city(self, id: int) -> str:
+        return self._get_addr_field(id, _Address.city)
+
+    def get_addr_state(self, id: int) -> str:
+        return self._get_addr_field(id, _Address.state)
+
+    def get_addr_zip(self, id: int) -> str:
+        return self._get_addr_field(id, _Address.zip)
+
+    def get_provider_ids(self) -> list[int]:
+        cur = self._con.cursor()
+        cur.execute(f"SELECT {_Service.id} FROM {_Provider.table_name}")
+        id_list = cur.fetchall()
+        return id_list
         
 
 ########## update database records
