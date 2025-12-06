@@ -3,7 +3,7 @@ import datetime
 import uuid
 
 from dao import DAO
-from ChocAn_main import get_option
+from util import get_option
 
 
 def provider_terminal():
