@@ -31,3 +31,9 @@ class Address:
 
     def zipcode(self) -> str:
         return self._zip
+
+class EFT:
+    PROVIDER_NAME = "provider_name"
+    PROVIDER_ID = "provider_id"
+    FEE = "fee"
+    DATETIME = "datetime"

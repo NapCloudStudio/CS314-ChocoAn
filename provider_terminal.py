@@ -1,9 +1,12 @@
 import os
 import datetime
 import uuid
+import json
 
 from dao import DAO
 from util import get_option
+from data_classes import EFT
+from data_classes import Provider
 from data_classes import Member
 
 
@@ -49,6 +52,7 @@ def validate_member():
 
 def create_report():
     data = DAO.chocan()
+    os.makedirs("eft/current", exist_ok=True)
     os.makedirs("provider_reports/current", exist_ok=True)
     os.makedirs("provider_reports/old", exist_ok=True)
 
@@ -62,7 +66,6 @@ def create_report():
     status = data.get_member_status(member)
 
     if status == Member.STATUS_ACTIVE:
-        
         while True:
             try:
                 provider = int(input("Enter your provider code: "))
@@ -70,10 +73,11 @@ def create_report():
             except ValueError:
                 print("Input must be an integer")
 
-        if data.get_provider_status(provider) == None:
+        provider_name = data.get_provider_name(provider)
+        if provider_name == None or data.get_provider_status(provider) != Provider.STATUS_ACTIVE:
             print("invalid provider id")
             return
-        
+
         while True:
             try:
                 service = int(input("Enter service code: "))
@@ -87,11 +91,11 @@ def create_report():
             return
 
         comments = input("Enter up to 100 characters of comments: ")
-        
+
         time = datetime.datetime.now()
 
-        filename = uuid.uuid4()
-        filename += ".txt"
+        service_uuid = uuid.uuid4()
+        filename = str(service_uuid) + ".txt"
 
         with open(f"provider_reports/current/{filename}", "wt") as filename:
             filename.write(f"Date and Time: {time}\n")
@@ -102,9 +106,20 @@ def create_report():
 
         print(f"service fee: {fee}")
 
+        json_file = str(service_uuid) + ".json"
+        with open(f"eft/current/{json_file}", "wt") as filename:
+            filename.write(json.dumps({
+                EFT.DATETIME: str(time),
+                EFT.PROVIDER_ID: provider,
+                EFT.PROVIDER_NAME: provider_name,
+                EFT.FEE: fee
+            }))
+
+        print("created successfully\n")
+
     else:
         print("membership invalid")
-        
+
 def service_directory():
     data = DAO.chocan()
     data.print_services()
