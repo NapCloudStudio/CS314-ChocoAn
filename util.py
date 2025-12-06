@@ -21,4 +21,6 @@ def get_option(count):
             for i in range(1, count):
                     print(f"{i},", end = ' ')
             print(f"or {count}): ")
+        except KeyboardInterrupt:
+            exit(0)
     return option

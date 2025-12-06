@@ -1,24 +1,28 @@
 from dao import DAO
 from util import get_option
 from util import sha256
+from data_classes import Provider, Member
 
-
-mgr_id = None
 
 def manager_terminal():
+    global mgr_id
     dao = DAO.chocan()
-    print("\nLogin")
-    input_id = input("User id: ")
-    input_pw = input("Password: ")
+    print("ChocAn Manager Login")
+    try:
+        input_id = input("User ID: ")
+        input_pw = input("Password: ")
+        int_id = int(input_id)
 
-    hash = dao.get_manager_password_hash(int(input_id))
-    if hash == sha256(input_pw):
-        print("Login successful!\n")
-        mgr_id = input_id
-        menu()
-    else:
-        print("Invalid login.")
-        return
+        if sha256(input_pw) == dao.get_manager_password_hash(int_id):
+            print("Login successful!\n")
+            mgr_id = int_id
+            menu()
+        else:
+            raise ValueError
+    except ValueError:
+        print("Invalid login.\n")
+    except KeyboardInterrupt:
+        exit(0)
 
 def menu():
     do_manager_terminal = True
@@ -32,6 +36,7 @@ def menu():
         print("4 - exit")
 
         option = get_option(4)
+        print()
 
         if option == 1:
            manage_providers()
@@ -60,17 +65,14 @@ def manage_providers():
             name = input("Enter the provider's name: ")
             email = input("Enter the provider's email: ")
 
-            #we might need to implement a hashing algorythm here, though for simplicitys sake we could just storte the passwords in plain text
             password = input("Enter the provider's password: ")
             street = input("Enter the provider's streed address: ")
             city = input("Enter the provider's city: ")
             state = input("Enter the provider's state: ")
             zipcode = input("Enter the provider's zip code: ")
 
-            password_hash = sha256(password)
-
             address_id = data.create_address(street, city, state, zipcode)
-            data.create_provider(name, password_hash, address_id, email, Provider.STATUS_ACTIVE)
+            data.create_provider(name, password, address_id, email, Provider.STATUS_ACTIVE)
         elif option == 2:
             while True:
                 try:
@@ -93,10 +95,8 @@ def manage_providers():
                     zipcode = input("Update the provider's zip code: ")
                     status = input("Update the provider's status: ")
 
-                    password_hash = sha256(password)
-
                     data.update_address(address, street, city, state, zipcode)
-                    data.update_provider(to_modify, name, password_hash, email, status)
+                    data.update_provider(to_modify, name, password, email, status)
 
         elif option == 3:
             while True:

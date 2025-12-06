@@ -16,6 +16,7 @@ def main():
         print("4 - Exit")
 
         option = get_option(4)
+        print()
 
         if option == 1:
             provider_terminal.provider_terminal()

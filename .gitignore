@@ -1,2 +1,4 @@
 __pycache__/*
 *.db
+eft/*
+provider_reports/*

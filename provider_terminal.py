@@ -4,13 +4,32 @@ import uuid
 import json
 
 from dao import DAO
-from util import get_option
-from data_classes import EFT
-from data_classes import Provider
-from data_classes import Member
+from util import sha256, get_option
+from data_classes import EFT, Provider, Member
 
 
 def provider_terminal():
+    global provider_id
+    dao = DAO.chocan()
+    print("ChocAn Provider Login")
+    try:
+        input_id = input("Provider ID: ")
+        input_pw = input("Password: ")
+        int_id = int(input_id)
+
+        if sha256(input_pw) == dao.get_provider_password_hash(int_id) and \
+                dao.get_provider_status(int_id) == Provider.STATUS_ACTIVE:
+            print("Login successful!\n")
+            provider_id = int_id
+            menu()
+        else:
+            raise ValueError
+    except ValueError:
+        print("Invalid login.\n")
+    except KeyboardInterrupt:
+        exit(0)
+
+def menu():
     do_provider_terminal = True
 
     while do_provider_terminal == True:
@@ -22,6 +41,7 @@ def provider_terminal():
         print("4 - exit")
 
         option = get_option(4)
+        print()
 
         match option:
             case 1:
@@ -66,15 +86,8 @@ def create_report():
     status = data.get_member_status(member)
 
     if status == Member.STATUS_ACTIVE:
-        while True:
-            try:
-                provider = int(input("Enter your provider code: "))
-                break
-            except ValueError:
-                print("Input must be an integer")
-
-        provider_name = data.get_provider_name(provider)
-        if provider_name == None or data.get_provider_status(provider) != Provider.STATUS_ACTIVE:
+        provider_name = data.get_provider_name(provider_id)
+        if provider_name == None or data.get_provider_status(provider_id) != Provider.STATUS_ACTIVE:
             print("invalid provider id")
             return
 
@@ -99,7 +112,7 @@ def create_report():
 
         with open(f"provider_reports/current/{filename}", "wt") as filename:
             filename.write(f"Date and Time: {time}\n")
-            filename.write(f"Provider number: {provider}\n")
+            filename.write(f"Provider number: {provider_id}\n")
             filename.write(f"Member number: {member}\n")
             filename.write(f"Service Code: {service}\n")
             filename.write(f"Comments: {comments}\n")
@@ -110,7 +123,7 @@ def create_report():
         with open(f"eft/current/{json_file}", "wt") as filename:
             filename.write(json.dumps({
                 EFT.DATETIME: str(time),
-                EFT.PROVIDER_ID: provider,
+                EFT.PROVIDER_ID: provider_id,
                 EFT.PROVIDER_NAME: provider_name,
                 EFT.FEE: fee
             }))
