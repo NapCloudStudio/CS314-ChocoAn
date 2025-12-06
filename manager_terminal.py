@@ -1,5 +1,5 @@
-from ChocAn_main import get_option
 from dao import DAO
+from util import get_option
 from util import sha256
 
 
@@ -7,18 +7,18 @@ mgr_id = None
 
 def manager_terminal():
     dao = DAO.chocan()
-    while True:
-        print("\nLogin")
-        input_id = input("User id: ")
-        input_pw = input("Password: ")
+    print("\nLogin")
+    input_id = input("User id: ")
+    input_pw = input("Password: ")
 
-        hash = dao.get_manager_password_hash(int(input_id))
-        if hash == sha256(input_pw):
-            print("Login successful!\n")
-            mgr_id = input_id
-            menu()
-        else:
-            print("Invalid login. Please try again.")
+    hash = dao.get_manager_password_hash(int(input_id))
+    if hash == sha256(input_pw):
+        print("Login successful!\n")
+        mgr_id = input_id
+        menu()
+    else:
+        print("Invalid login.")
+        return
 
 def menu():
     do_manager_terminal = True
@@ -70,7 +70,7 @@ def manage_providers():
             password_hash = sha256(password)
 
             address_id = data.create_address(street, city, state, zipcode)
-            data.create_provider(name, password_hash, address_id, email, "valid")
+            data.create_provider(name, password_hash, address_id, email, Provider.STATUS_ACTIVE)
         elif option == 2:
             while True:
                 try:
@@ -79,7 +79,7 @@ def manage_providers():
                 except(ValueError):
                     print("Input must be an integer")
 
-                address = data.get_provider_addr(to_modify)
+                address = data.get_provider_addr_id(to_modify)
 
                 if address == None:
                     print("Provider record not found")
@@ -173,7 +173,7 @@ def manage_members():
             zipcode = input("Enter the member's zip code: ")
 
             address_id = data.create_address(street, city, state, zipcode)
-            data.create_member(name, address_id, "valid")
+            data.create_member(name, address_id, Member.STATUS_ACTIVE)
 
         elif option == 2:
             while True:

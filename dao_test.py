@@ -75,7 +75,18 @@ def get_provider_addr():
     p1 = (1, "3115 Hannah Street", "Andrews", "NC", "28901")
     _get_provider_addr(p1)
     _get_provider_addr((2, "1110 Patterson Street", "Houston", "TX", "77002"))
+    print(f"provider 1 addr id: {dao.get_provider_addr_id(1)}")
     print("get provider addr passed")
+
+def get_address():
+    addr = dao.get_address(1)
+    assert addr.id() == 1, "wrong address returned from dao.get_address"
+    print("addr 1")
+    print(f"  id: {addr.id()}")
+    print(f"  street: {addr.street()}")
+    print(f"  city: {addr.city()}")
+    print(f"  state: {addr.state()}")
+    print(f"  zip: {addr.zipcode()}")
 
 def update_addr():
     dao.update_address(1, zip="asdf", city="zxcv")
@@ -119,6 +130,7 @@ if __name__ == "__main__":
     get_member_status()
     get_provider_addr()
 
+    get_address()
     update_addr()
 
     delete_p()
