@@ -210,6 +210,23 @@ class DAO:
         addr_id = self._get_member_field(id, _Member.address_id)
         return addr_id
 
+    def _get_service_field(self, id: int, field: str) -> str:
+        data = { "id": id }
+        cur = self._con.cursor()
+        response = cur.execute(f"""select {field} from {_Service.table_name}
+            where {_Service.id} = :id""", data)
+        result = response.fetchone()
+        return None if result is None else result[0]
+
+    def get_service_fee(self, id: int) -> int:
+        return self._get_service_field(id, _Service.fee)
+
+    def print_services(self):
+        cur = self._con.cursor()
+        cur.execute(f"SELECT * FROM {_Service.table_name} ORDER BY {_Service.name} ASC")
+        rows = cur.fetchall()
+        for row in rows:
+            print(row)
         
 
 ########## update database records
